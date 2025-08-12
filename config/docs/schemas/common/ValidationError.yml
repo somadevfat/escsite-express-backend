@@ -1,0 +1,31 @@
+type: object
+required:
+  - error
+  - statusCode
+  - validationErrors
+properties:
+  error:
+    type: string
+    example: Validation Error
+  message:
+    type: string
+    example: Validation failed
+  statusCode:
+    type: integer
+    example: 422
+  validationErrors:
+    type: array
+    items:
+      type: object
+      required:
+        - field
+        - message
+      properties:
+        field:
+          type: string
+          example: body.email
+        message:
+          type: string
+          example: Invalid email address
+
+

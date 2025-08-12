@@ -17,3 +17,5 @@ post:
         application/json:
           schema:
             $ref: ../../../responses/auth/AuthSigninResponse.yml
+    '422':
+      $ref: ../../../responses/common/ValidationErrorResponse.yml

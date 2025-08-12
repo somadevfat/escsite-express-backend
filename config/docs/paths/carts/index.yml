@@ -11,6 +11,8 @@ get:
         application/json:
           schema:
             $ref: ../../responses/carts/CartsResponse.yml
+    '422':
+      $ref: ../../responses/common/ValidationErrorResponse.yml
 post:
   tags:
     - carts
@@ -30,3 +32,5 @@ post:
         application/json:
           schema:
             $ref: ../../responses/carts/CartsResponse.yml
+    '422':
+      $ref: ../../responses/common/ValidationErrorResponse.yml

@@ -2,6 +2,7 @@
 CREATE TABLE `users` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(191) NOT NULL,
+    `password_hash` VARCHAR(191) NULL,
     `email_verified_at` DATETIME(3) NULL,
     `email_reissue_token` VARCHAR(191) NULL,
     `is_admin` BOOLEAN NOT NULL DEFAULT false,
