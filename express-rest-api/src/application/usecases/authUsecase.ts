@@ -11,6 +11,11 @@ export class AuthUsecase {
   async signout(token?: string): Promise<void> {
     await this.authRepository.signout(token);
   }
+
+  async signup(email: string, password: string): Promise<{ token: string }> {
+    const token = await this.authRepository.signup(email, password);
+    return { token };
+  }
 }
 
 

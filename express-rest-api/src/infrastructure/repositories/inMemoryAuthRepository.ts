@@ -17,6 +17,14 @@ export class InMemoryAuthRepository implements IAuthRepository {
   async signout(_token?: string): Promise<void> {
     return;
   }
+
+  async signup(email: string, password: string): Promise<string> {
+    // 簡易に password 一致を不要にし、トークンを発行（本番はDB登録・重複チェックなど）
+    if (!email || !password) {
+      throw new Error('Invalid signup payload');
+    }
+    return `token-user-${Date.now()}`;
+  }
 }
 
 

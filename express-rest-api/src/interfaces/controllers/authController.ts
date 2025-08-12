@@ -32,6 +32,16 @@ export class AuthController {
       res.status(500).json({ error: 'Failed to signout', statusCode: 500 });
     }
   }
+
+  async signup(req: Request, res: Response): Promise<void> {
+    try {
+      const { email, password } = req.body as { email: string; password: string };
+      const result = await this.authUsecase.signup(email, password);
+      res.status(200).json(result);
+    } catch (e) {
+      res.status(400).json({ error: 'Failed to signup', statusCode: 400 });
+    }
+  }
 }
 
 
