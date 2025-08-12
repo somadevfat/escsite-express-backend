@@ -1,43 +1,37 @@
-## 環境構築
+## Express 開発環境（Docker）
 
-- `api`と`config`のリポジトリをクローン
-  - 以下のフォルダ構成にする
-  ```
-  <project-name>
-  ├── config // docker環境構築設定ファイル
-  ├── api // Laravelプロジェクト
-  ```
+この `config` は Express（TypeScript + Prisma + MySQL）の開発用 Docker 構成です。
 
-### 環境構築手順（Mac）
+### 構成
+- `express`（開発サーバー、`npm run dev`）: ポート `18081`
+- `lh_react_mysql`（MySQL）: ポート `13307`
+- `lh_react_adminer`（DB GUI）: ポート `18080`
 
-- config に移動 `cd config`
-- `make init`で docker のコンテナ、server コンテナの nginx を起動する
-- POST: `http://localhost:8080/api/auth/signin` の API を次のパラメータで叩き `{"email": "user@lh.sandbox","password": "pass"}` でログインする。
-- http://localhost:8080 を確認
-  - Laravel の初期画面が表示されれば OK
+環境変数（抜粋）:
+- `DATABASE_URL=mysql://api_user:p@ssw0rd@lh_react_mysql:3306/api_db`
+- `SHADOW_DATABASE_URL=mysql://api_user:p@ssw0rd@lh_react_mysql:3306/api_db_shadow`
+- `JWT_SECRET=dev_secret`
 
-### 環境構築手順（WSL（Windows））
+### 手順
+1. `cd config`
+2. 初回セットアップ（ワンコマンド）: `make init`
+   - コンテナ起動 → MySQL 起動待ち → Prisma `migrate deploy` → Client 生成 → Seed → ヘルスチェック → Prisma Studio 自動起動（:5555）
+3. 以降の起動: `make up`
+4. 停止/再起動: `make down` / `make restart`
+5. ログ確認: `make logs`
+6. DB リセット: `make db-reset`
+7. テスト実行: `make test`
 
-1. config に移動 `cd config`
-2. `make init`で docker のコンテナ、server コンテナの nginx を起動する
-3. `make db-fresh`で データベースをリセットする
-4. config から api に移動 `cd ../api`
-5. 権限を変更 `sudo chmod 777 . -R`（必ず api ディレクトリで実行してください）
-6. http://localhost:8080 を確認
-   - Laravel の初期画面が表示されれば OK
+### 接続確認
+- API: `http://localhost:18081/api/items` など
+- Adminer: `http://localhost:18080`
+  - サーバー: `lh_react_mysql`
+  - ユーザー: `api_user`
+  - パスワード: `p@ssw0rd`
+  - DB: `api_db`
+- Prisma Studio: `http://localhost:5555`（DBブラウザ。`make init` で自動起動。手動起動は `make studio`）
 
-### API ドキュメント
-
-http://localhost:8888
-
-### 操作ガイド
-
-- 各コンテナを起動して、nginx を起動する `make start`
-- データベースをリセットする `make db-fresh`
-- nginx を起動する `make nginx-start`
-- PC を電源を落とした場合には `make up`
-
-Docker Desktop for Mac で `Failed to get D-Bus connection: No such file or directory`
-と表示される場合は別途設定が必要
-
-[参考](https://ufirst.jp/memo/2023/01/docker-desktop-for-mac-%E3%81%A7-%E3%80%8Cfailed-to-get-d-bus-connection-no-such-file-or-directory%E3%80%8D%E3%82%A8%E3%83%A9%E3%83%BC/)
+### 補足
+- CORS は許可済み（`origin: true, credentials: true`）。フロントから直接アクセスできます。
+- バリデーションエラーは 422 で `{ error, message, statusCode, validationErrors[] }` を返します。
+- Prisma Studio はリアルタイム更新ではありません。DB 更新後は Studio 画面のリロード（ブラウザ更新）または Studio 再起動（`make studio`）で最新状態を反映してください。

@@ -4,8 +4,10 @@ info:
   description: Template of split OpenAPI with validator
   version: 1.0.0
 servers:
+  - url: "http://localhost:18081/api"
+    description: Local Express API
   - url: "{server}"
-    description: URL of the server
+    description: Reverse proxy base (relative)
     variables:
       server:
         default: /api
@@ -32,6 +34,11 @@ paths:
   /carts:
     $ref: ./paths/carts/index.yml
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     User:
       $ref: ./schemas/models/User.yml
@@ -41,3 +48,11 @@ components:
       $ref: ./schemas/models/Item.yml
     Cart:
       $ref: ./schemas/models/Cart.yml
+    ValidationError:
+      $ref: ./schemas/common/ValidationError.yml
+  responses:
+    ValidationErrorResponse:
+      $ref: ./responses/common/ValidationErrorResponse.yml
+
+security:
+  - BearerAuth: []

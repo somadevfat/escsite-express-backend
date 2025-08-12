@@ -1,7 +1,8 @@
 # 変数設定
 @hostname = http://localhost
-@port = 8080
+@port = 18081
 @api = {{hostname}}:{{port}}/api
+@token = 
 @itemId = 1
 
 ###
@@ -9,6 +10,7 @@
 # "Send Request" を実行すると、新しい商品が作成されます。
 POST {{api}}/items
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "name": "すごいキーボード",
@@ -30,6 +32,7 @@ GET {{api}}/items/{{itemId}}
 # @itemId変数を設定してから実行してください。
 PUT {{api}}/items/{{itemId}}
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "name": "すごいキーボードV2",
@@ -42,6 +45,7 @@ Content-Type: application/json
 # 5. 商品を削除する (DELETE /items/:ItemId)
 # @itemId変数を設定してから実行してください。
 DELETE {{api}}/items/{{itemId}}
+Authorization: Bearer {{token}}
 
 ###
 # 6. ページネーションのテスト (GET /items?limit=2&page=2)
