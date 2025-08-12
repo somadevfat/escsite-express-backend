@@ -12,6 +12,7 @@ import { createUserRoutes } from './userRoutes';
 import { createAuthRoutes } from './authRoutes';
 import { validate } from '../validate';
 import { createItemSchema, updateItemSchema, listItemsQuerySchema } from '../dto/itemDto';
+import { authenticate } from '../middleware/auth';
 
 /**
  * Itemエンドポイントのルーティングを設定
@@ -49,8 +50,8 @@ export function createApiRoutes(itemController: ItemController, userController: 
   // Items関連のルートを /api/items に設定
   apiRouter.use('/items', createItemRoutes(itemController));
 
-  // My User関連のルートを /api/my/user に設定
-  apiRouter.use('/my/user', createUserRoutes(userController));
+  // My User関連のルートを /api/my/user に設定（JWT 認証必須）
+  apiRouter.use('/my/user', authenticate, createUserRoutes(userController));
   if (cartController) {
     apiRouter.use('/carts', createCartRoutes(cartController));
   }
