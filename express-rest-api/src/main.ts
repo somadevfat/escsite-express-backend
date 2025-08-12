@@ -4,12 +4,12 @@
  */
 
 import express, { Express } from 'express';
-import dotenv from 'dotenv';
+import { loadEnv } from './config/env';
 import { Container } from './config/container';
 import { createApiRoutes } from './interfaces/routes/itemRoutes';
 
-// 環境変数の読み込み
-dotenv.config();
+// 環境変数の読み込み (.env.development があれば優先して読み込む)
+loadEnv();
 
 /**
  * アプリケーションを初期化して返す（テストでも利用）

@@ -15,6 +15,9 @@ import { ICartRepository } from '../domain/repositories/cartRepository';
 import { InMemoryCartRepository } from '../infrastructure/repositories/inMemoryCartRepository';
 import { CartUsecase } from '../application/usecases/cartUsecase';
 import { CartController } from '../interfaces/controllers/cartController';
+import { PrismaItemRepository } from '../infrastructure/repositories/prismaItemRepository';
+import { PrismaUserRepository } from '../infrastructure/repositories/prismaUserRepository';
+import { PrismaCartRepository } from '../infrastructure/repositories/prismaCartRepository';
 import { IAuthRepository } from '../domain/repositories/authRepository';
 import { InMemoryAuthRepository } from '../infrastructure/repositories/inMemoryAuthRepository';
 import { AuthUsecase } from '../application/usecases/authUsecase';
@@ -50,9 +53,10 @@ export class Container {
     // 注意: 依存関係の順序が重要（下位レイヤーから上位レイヤーへ）
 
     // Infrastructure Layer (最下位)
-    this.itemRepository = new InMemoryItemRepository();
-    this.userRepository = new InMemoryUserRepository();
-    this.cartRepository = new InMemoryCartRepository();
+    const usePrisma = process.env.USE_DB === 'true';
+    this.itemRepository = usePrisma ? new PrismaItemRepository() : new InMemoryItemRepository();
+    this.userRepository = usePrisma ? new PrismaUserRepository() : new InMemoryUserRepository();
+    this.cartRepository = usePrisma ? new PrismaCartRepository() : new InMemoryCartRepository();
     this.authRepository = new InMemoryAuthRepository();
 
     // Application Layer
