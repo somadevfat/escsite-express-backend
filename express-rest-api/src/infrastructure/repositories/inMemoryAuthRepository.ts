@@ -1,4 +1,5 @@
 import { IAuthRepository } from '../../domain/repositories/authRepository';
+import { signAuthToken } from '../../config/jwt';
 
 export class InMemoryAuthRepository implements IAuthRepository {
   private readonly adminEmail = 'admin@lh.sandbox';
@@ -10,8 +11,12 @@ export class InMemoryAuthRepository implements IAuthRepository {
     if (!ok) {
       throw new Error('Invalid credentials');
     }
-    // 疑似トークン
-    return `token-${admin ? 'admin' : 'user'}-${Date.now()}`;
+    const payload = {
+      sub: admin ? '1' : '2',
+      email,
+      isAdmin: !!admin,
+    } as const;
+    return signAuthToken(payload);
   }
 
   async signout(_token?: string): Promise<void> {
@@ -23,7 +28,12 @@ export class InMemoryAuthRepository implements IAuthRepository {
     if (!email || !password) {
       throw new Error('Invalid signup payload');
     }
-    return `token-user-${Date.now()}`;
+    const payload = {
+      sub: '2',
+      email,
+      isAdmin: false,
+    } as const;
+    return signAuthToken(payload);
   }
 }
 
