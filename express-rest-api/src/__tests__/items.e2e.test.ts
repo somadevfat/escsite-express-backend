@@ -7,7 +7,7 @@ describe('Items API E2E', () => {
 
   beforeAll(async () => {
     const signin = await request(app)
-      .post('/api/auth/signin')
+      .post('/api/auth/admin/signin')
       .send({ email: 'admin@lh.sandbox', password: 'pass' })
       .set('Content-Type', 'application/json');
     expect(signin.status).toBe(200);
