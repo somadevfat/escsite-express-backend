@@ -3,7 +3,7 @@
  * アプリケーションの起動と基本設定のみを行う
  */
 
-import express from 'express';
+import express, { Express } from 'express';
 import dotenv from 'dotenv';
 import { Container } from './config/container';
 import { createApiRoutes } from './interfaces/routes/itemRoutes';
@@ -12,27 +12,33 @@ import { createApiRoutes } from './interfaces/routes/itemRoutes';
 dotenv.config();
 
 /**
- * アプリケーションを初期化し起動する
+ * アプリケーションを初期化して返す（テストでも利用）
+ */
+export function createApp(): Express {
+  // Expressアプリケーションの作成
+  const app = express();
+
+  // 基本的なミドルウェアの設定
+  app.use(express.json());
+
+  // DIコンテナからコントローラーを取得
+  const container = Container.getInstance();
+  const itemController = container.getItemController();
+  const userController = container.getUserController();
+
+  // APIルートの設定
+  app.use('/api', createApiRoutes(itemController, userController));
+
+  return app;
+}
+
+/**
+ * アプリケーションを起動する
  */
 async function startApplication(): Promise<void> {
   try {
-    // Expressアプリケーションの作成
-    const app = express();
+    const app = createApp();
     const port = process.env.PORT || 18081;
-
-    // 基本的なミドルウェアの設定
-    app.use(express.json());
-
-    // DIコンテナからコントローラーを取得
-    const container = Container.getInstance();
-    const itemController = container.getItemController();
-    const userController = container.getUserController();
-
-    // Swagger UIの提供はこのアプリから除去（ドキュメントは別サービスで提供）
-
-    // APIルートの設定
-    app.use('/api', createApiRoutes(itemController, userController));
-
     // サーバー起動
     app.listen(port, () => {
       console.log(`🚀 Server is running at http://localhost:${port}`);
