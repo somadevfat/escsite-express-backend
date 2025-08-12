@@ -1,8 +1,0 @@
-title: AddressResponse
-allOf:
-  - type: object
-    properties:
-      data:
-        $ref: ../../../schemas/models/Address.yml
-required:
-  - data

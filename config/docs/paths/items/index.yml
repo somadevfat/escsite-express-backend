@@ -48,6 +48,8 @@ get:
         application/json:
           schema:
             $ref: ../../responses/items/ItemsResponse.yml
+    '422':
+      $ref: ../../responses/common/ValidationErrorResponse.yml
 post:
   tags:
     - items
@@ -67,6 +69,8 @@ post:
         application/json:
           schema:
             $ref: ../../responses/items/ItemResponse.yml
+    '422':
+      $ref: ../../responses/common/ValidationErrorResponse.yml
 #definitions:
 #  bodyContent:
 #    content:

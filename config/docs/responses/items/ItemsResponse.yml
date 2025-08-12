@@ -1,4 +1,4 @@
-title: UsersResponse
+title: ItemsResponse
 type: object
 allOf:
   - $ref: ../../schemas/models/Pagination.yml

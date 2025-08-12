@@ -3,36 +3,65 @@
  * アプリケーションの起動と基本設定のみを行う
  */
 
-import express from 'express';
-import dotenv from 'dotenv';
+import express, { Express } from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
+import { loadEnv } from './config/env';
 import { Container } from './config/container';
 import { createApiRoutes } from './interfaces/routes/itemRoutes';
+import { ensurePrismaSeed } from './infrastructure/prisma/seed';
 
-// 環境変数の読み込み
-dotenv.config();
+// 環境変数の読み込み (.env.development があれば優先して読み込む)
+loadEnv();
 
 /**
- * アプリケーションを初期化し起動する
+ * アプリケーションを初期化して返す（テストでも利用）
+ */
+export function createApp(): Express {
+  // Expressアプリケーションの作成
+  const app = express();
+
+  // 基本的なミドルウェアの設定
+  app.use(helmet());
+  app.use(cors({ origin: true, credentials: true }));
+  const windowMsSec = Number(process.env.RATE_LIMIT_WINDOW_SEC ?? 60);
+  const maxReq = Number(process.env.RATE_LIMIT_MAX ?? 1000);
+  app.use(
+    rateLimit({
+      windowMs: windowMsSec * 1000,
+      max: maxReq,
+      standardHeaders: true,
+      legacyHeaders: false,
+    })
+  );
+  app.use(express.json());
+
+  // DIコンテナからコントローラーを取得
+  const container = Container.getInstance();
+  const itemController = container.getItemController();
+  const userController = container.getUserController();
+  const cartController = container.getCartController();
+  const authController = container.getAuthController();
+
+  // APIルートの設定
+  app.use('/api', createApiRoutes(itemController, userController, cartController, authController));
+
+  return app;
+}
+
+/**
+ * アプリケーションを起動する
  */
 async function startApplication(): Promise<void> {
   try {
-    // Expressアプリケーションの作成
-    const app = express();
-    const port = process.env.PORT || 8080;
+    const useDb = process.env.USE_DB === 'true';
+    if (useDb) {
+      await ensurePrismaSeed();
+    }
 
-    // 基本的なミドルウェアの設定
-    app.use(express.json());
-
-    // DIコンテナからコントローラーを取得
-    const container = Container.getInstance();
-    const itemController = container.getItemController();
-    const userController = container.getUserController();
-
-    // Swagger UIの提供はこのアプリから除去（ドキュメントは別サービスで提供）
-
-    // APIルートの設定
-    app.use('/api', createApiRoutes(itemController, userController));
-
+    const app = createApp();
+    const port = process.env.PORT || 18081;
     // サーバー起動
     app.listen(port, () => {
       console.log(`🚀 Server is running at http://localhost:${port}`);
