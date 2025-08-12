@@ -11,7 +11,7 @@ import { createCartRoutes } from './cartRoutes';
 import { createUserRoutes } from './userRoutes';
 import { createAuthRoutes } from './authRoutes';
 import { validate } from '../validate';
-import { createItemSchema, updateItemSchema } from '../dto/itemDto';
+import { createItemSchema, updateItemSchema, listItemsQuerySchema } from '../dto/itemDto';
 
 /**
  * Itemエンドポイントのルーティングを設定
@@ -22,7 +22,7 @@ export function createItemRoutes(itemController: ItemController): Router {
   const router = Router();
 
   // GET /items - 商品一覧取得（ページネーション付き）
-  router.get('/', (req, res) => itemController.getAll(req, res));
+  router.get('/', validate(listItemsQuerySchema), (req, res) => itemController.getAll(req, res));
 
   // POST /items - 商品作成
   router.post('/', validate(createItemSchema), (req, res) => itemController.create(req, res));

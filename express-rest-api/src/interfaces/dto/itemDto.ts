@@ -17,3 +17,16 @@ export const updateItemSchema = z.object({
     content: z.string(), // PUTはcontent必須（決定ログに準拠）
   }),
 });
+
+// GET /items クエリ用
+export const listItemsQuerySchema = z.object({
+  query: z.object({
+    limit: z.coerce.number().int().positive().max(100).optional(),
+    page: z.coerce.number().int().positive().optional(),
+    name_like: z.string().optional(),
+    price_gte: z.coerce.number().int().min(0).optional(),
+    price_lte: z.coerce.number().int().min(0).optional(),
+    price_gt: z.coerce.number().int().min(0).optional(),
+    price_lt: z.coerce.number().int().min(0).optional(),
+  }),
+});
