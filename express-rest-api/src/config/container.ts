@@ -11,6 +11,14 @@ import { UserUsecase } from '../application/usecases/userUsecase';
 import { IUserRepository } from '../domain/repositories/userRepository';
 import { InMemoryUserRepository } from '../infrastructure/repositories/inMemoryUserRepository';
 import { UserController } from '../interfaces/controllers/userController';
+import { ICartRepository } from '../domain/repositories/cartRepository';
+import { InMemoryCartRepository } from '../infrastructure/repositories/inMemoryCartRepository';
+import { CartUsecase } from '../application/usecases/cartUsecase';
+import { CartController } from '../interfaces/controllers/cartController';
+import { IAuthRepository } from '../domain/repositories/authRepository';
+import { InMemoryAuthRepository } from '../infrastructure/repositories/inMemoryAuthRepository';
+import { AuthUsecase } from '../application/usecases/authUsecase';
+import { AuthController } from '../interfaces/controllers/authController';
 
 /**
  * DIコンテナクラス
@@ -22,14 +30,20 @@ export class Container {
   // リポジトリ
   private readonly itemRepository: IItemRepository;
   private readonly userRepository: IUserRepository;
+  private readonly cartRepository: ICartRepository;
+  private readonly authRepository: IAuthRepository;
 
   // ユースケース
   private readonly itemUsecase: ItemUsecase;
   private readonly userUsecase: UserUsecase;
+  private readonly cartUsecase: CartUsecase;
+  private readonly authUsecase: AuthUsecase;
 
   // コントローラー
   private readonly itemController: ItemController;
   private readonly userController: UserController;
+  private readonly cartController: CartController;
+  private readonly authController: AuthController;
 
   private constructor() {
     // 依存性の注入をここで設定
@@ -38,14 +52,20 @@ export class Container {
     // Infrastructure Layer (最下位)
     this.itemRepository = new InMemoryItemRepository();
     this.userRepository = new InMemoryUserRepository();
+    this.cartRepository = new InMemoryCartRepository();
+    this.authRepository = new InMemoryAuthRepository();
 
     // Application Layer
     this.itemUsecase = new ItemUsecase(this.itemRepository);
     this.userUsecase = new UserUsecase(this.userRepository);
+    this.cartUsecase = new CartUsecase(this.cartRepository);
+    this.authUsecase = new AuthUsecase(this.authRepository);
 
     // Interface Layer (最上位)
     this.itemController = new ItemController(this.itemUsecase);
     this.userController = new UserController(this.userUsecase);
+    this.cartController = new CartController(this.cartUsecase);
+    this.authController = new AuthController(this.authUsecase);
   }
 
   /**
@@ -84,6 +104,20 @@ export class Container {
    */
   public getUserController(): UserController {
     return this.userController;
+  }
+
+  /**
+   * CartControllerのインスタンスを取得
+   */
+  public getCartController(): CartController {
+    return this.cartController;
+  }
+
+  /**
+   * AuthControllerのインスタンスを取得
+   */
+  public getAuthController(): AuthController {
+    return this.authController;
   }
 
   /**

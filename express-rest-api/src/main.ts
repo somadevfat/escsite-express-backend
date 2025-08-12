@@ -25,9 +25,11 @@ export function createApp(): Express {
   const container = Container.getInstance();
   const itemController = container.getItemController();
   const userController = container.getUserController();
+  const cartController = container.getCartController();
+  const authController = container.getAuthController();
 
   // APIルートの設定
-  app.use('/api', createApiRoutes(itemController, userController));
+  app.use('/api', createApiRoutes(itemController, userController, cartController, authController));
 
   return app;
 }

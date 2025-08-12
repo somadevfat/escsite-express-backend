@@ -6,7 +6,10 @@
 import { Router } from 'express';
 import { ItemController } from '../controllers/itemController';
 import { UserController } from '../controllers/userController';
+import { CartController } from '../controllers/cartController';
+import { createCartRoutes } from './cartRoutes';
 import { createUserRoutes } from './userRoutes';
+import { createAuthRoutes } from './authRoutes';
 import { validate } from '../validate';
 import { createItemSchema, updateItemSchema } from '../dto/itemDto';
 
@@ -40,7 +43,7 @@ export function createItemRoutes(itemController: ItemController): Router {
  * すべてのAPIルートを設定
  * 将来的に他のリソース（users, cartsなど）も追加予定
  */
-export function createApiRoutes(itemController: ItemController, userController: UserController): Router {
+export function createApiRoutes(itemController: ItemController, userController: UserController, cartController?: CartController, authController?: import('../controllers/authController').AuthController): Router {
   const apiRouter = Router();
 
   // Items関連のルートを /api/items に設定
@@ -48,7 +51,13 @@ export function createApiRoutes(itemController: ItemController, userController: 
 
   // My User関連のルートを /api/my/user に設定
   apiRouter.use('/my/user', createUserRoutes(userController));
-  // apiRouter.use('/carts', createCartRoutes(cartController));
+  if (cartController) {
+    apiRouter.use('/carts', createCartRoutes(cartController));
+  }
+
+  if (authController) {
+    apiRouter.use('/auth', createAuthRoutes(authController));
+  }
 
   return apiRouter;
 }
