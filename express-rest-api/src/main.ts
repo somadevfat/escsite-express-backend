@@ -18,7 +18,7 @@ async function startApplication(): Promise<void> {
   try {
     // Expressアプリケーションの作成
     const app = express();
-    const port = process.env.PORT || 8080;
+    const port = process.env.PORT || 18081;
 
     // 基本的なミドルウェアの設定
     app.use(express.json());

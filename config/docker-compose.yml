@@ -118,6 +118,9 @@ services:
       - "8888:8080"
     volumes:
       - ./docs:/usr/share/nginx/html/docs
+      - ./server/nginx/swagger-ui/conf:/etc/nginx/conf.d
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - URL=./docs/openapi.yml
 
