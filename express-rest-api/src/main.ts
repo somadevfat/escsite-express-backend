@@ -10,6 +10,7 @@ import rateLimit from 'express-rate-limit';
 import { loadEnv } from './config/env';
 import { Container } from './config/container';
 import { createApiRoutes } from './interfaces/routes/itemRoutes';
+import { ensurePrismaSeed } from './infrastructure/prisma/seed';
 
 // 環境変数の読み込み (.env.development があれば優先して読み込む)
 loadEnv();
@@ -54,6 +55,11 @@ export function createApp(): Express {
  */
 async function startApplication(): Promise<void> {
   try {
+    const useDb = process.env.USE_DB === 'true';
+    if (useDb) {
+      await ensurePrismaSeed();
+    }
+
     const app = createApp();
     const port = process.env.PORT || 18081;
     // サーバー起動
