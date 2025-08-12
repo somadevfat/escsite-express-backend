@@ -20,6 +20,7 @@ import { PrismaUserRepository } from '../infrastructure/repositories/prismaUserR
 import { PrismaCartRepository } from '../infrastructure/repositories/prismaCartRepository';
 import { IAuthRepository } from '../domain/repositories/authRepository';
 import { InMemoryAuthRepository } from '../infrastructure/repositories/inMemoryAuthRepository';
+import { PrismaAuthRepository } from '../infrastructure/repositories/prismaAuthRepository';
 import { AuthUsecase } from '../application/usecases/authUsecase';
 import { AuthController } from '../interfaces/controllers/authController';
 
@@ -57,7 +58,7 @@ export class Container {
     this.itemRepository = usePrisma ? new PrismaItemRepository() : new InMemoryItemRepository();
     this.userRepository = usePrisma ? new PrismaUserRepository() : new InMemoryUserRepository();
     this.cartRepository = usePrisma ? new PrismaCartRepository() : new InMemoryCartRepository();
-    this.authRepository = new InMemoryAuthRepository();
+    this.authRepository = usePrisma ? new PrismaAuthRepository() : new InMemoryAuthRepository();
 
     // Application Layer
     this.itemUsecase = new ItemUsecase(this.itemRepository);

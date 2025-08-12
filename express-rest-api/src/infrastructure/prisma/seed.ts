@@ -1,12 +1,15 @@
 import { getPrismaClient } from './client';
+import bcrypt from 'bcrypt';
 
 export async function ensurePrismaSeed(): Promise<void> {
   const prisma = getPrismaClient();
   const users = await prisma.user.count();
   if (users === 0) {
+    const passwordHash = await bcrypt.hash('pass', 10);
     await prisma.user.create({
       data: {
         email: 'admin@lh.sandbox',
+        passwordHash,
         isAdmin: true,
         createdBy: 1,
         updatedBy: 1,

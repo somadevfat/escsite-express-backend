@@ -10,14 +10,15 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model User {
   id                Int       @id @default(autoincrement())
   email             String    @unique
+  passwordHash      String?   @map("password_hash")
   emailVerifiedAt   DateTime? @map("email_verified_at")
   emailReissueToken String?   @map("email_reissue_token")
   isAdmin           Boolean   @default(false) @map("is_admin")
@@ -26,7 +27,7 @@ model User {
   createdBy         Int       @map("created_by")
   updatedBy         Int       @map("updated_by")
 
-  carts             Cart[]
+  carts Cart[]
 
   @@map("users")
 }
@@ -42,7 +43,7 @@ model Item {
   createdBy Int      @map("created_by")
   updatedBy Int      @map("updated_by")
 
-  carts     Cart[]
+  carts Cart[]
 
   @@map("items")
 }
@@ -57,8 +58,8 @@ model Cart {
   createdBy Int      @map("created_by")
   updatedBy Int      @map("updated_by")
 
-  user      User     @relation(fields: [userId], references: [id])
-  item      Item     @relation(fields: [itemId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+  item Item @relation(fields: [itemId], references: [id])
 
   @@index([userId])
   @@index([itemId])
