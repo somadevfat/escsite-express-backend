@@ -78,12 +78,20 @@ API機能が固まったら、データを永続化するためにデータベ�
 - [ ] 更新時のロールバック/旧ファイル削除ルール
 
 ### P7: 認証/認可（本番仕様）
-- [ ] JWT または セッション（Cookie+CSRF）方式を決定
-- [ ] `/auth` 実装を本番仕様へ（疑似トークン除去、失敗時のHTTP/フォーマット整備）
+- [x] 認証方式を決定: JWT を採用（HS256, `JWT_SECRET`, `JWT_EXPIRES_IN`）
+- [ ] `/auth` 実装を本番仕様へ
+  - [x] 疑似トークン除去 → JWT 発行/検証に移行
+  - [ ] 失敗時のHTTP/エラーフォーマット整備（@api 準拠, 422 等）
+  - [ ] パスワードハッシュ/DB照合（`PrismaAuthRepository` 追加）
+  - [ ] トークン戦略: 短命アクセストークン + リフレッシュ or ローテーション定義
 - [ ] ルート毎の認可（管理者専用 等）
+  - [x] `/api/items` の POST/PUT/DELETE を管理者専用化（`authenticate` + `requireAdmin`）
+  - [x] `/api/my/user` に JWT 認証を適用
+  - [ ] その他の保護対象ルートの洗い出しと適用
 
 ### P8: セキュリティ/安定性
-- [ ] CORS/Helmet/RateLimit 導入
+- [x] CORS/Helmet/RateLimit 導入（開発: Express ミドルウェアで適用）
+- [ ] 本番: Nginx 前段で CORS/セキュリティヘッダ/RateLimit/TLS/サイズ上限 を適用
 - [ ] バリデーションエラー形式/HTTP 422 を @api に準拠
 - [ ] 入力サイズ上限（画像/JSON）
 - [ ] `/health` と Graceful shutdown
@@ -99,3 +107,8 @@ API機能が固まったら、データを永続化するためにデータベ�
 ### P11: CI/CD
 - [ ] Lint/Test/Build/Migrate/Deploy のパイプライン
 - [ ] Secrets 管理（環境別 .env）
+
+### P2.5: 環境変数ローディングの整備（横断）
+- [x] `.env` → `.env.{NODE_ENV}` の優先読み込みに変更
+- [x] テスト用 `.env.test` を追加（`JWT_SECRET`, `JWT_EXPIRES_IN`）
+- [ ] 本番/ステージングの `.env` 運用ルール整備
