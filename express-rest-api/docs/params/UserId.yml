@@ -1,8 +1,0 @@
-in: path
-name: userId
-description: ユーザID
-required: true
-schema:
-  type: integer
-  description: ユーザID
-  example: 1

@@ -1,3 +1,0 @@
-title: ItemResponse
-properties:
-$ref: ../../schemas/models/Item.yml

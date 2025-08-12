@@ -1,6 +1,0 @@
-name: page
-in: query
-description: ページネーションのオフセット、何ページ目かを表す
-schema:
-  type: integer
-  example: 1
