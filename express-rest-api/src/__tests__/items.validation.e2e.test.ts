@@ -10,15 +10,15 @@ describe('Items API Validation E2E', () => {
     expect(Array.isArray(res.body.data)).toBe(true);
   });
 
-  it('GET /api/items with invalid limit should return 400', async () => {
+  it('GET /api/items with invalid limit should return 422', async () => {
     const res = await request(app).get('/api/items?limit=abc');
-    expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty('message');
+    expect(res.status).toBe(422);
+    expect(res.body).toHaveProperty('validationErrors');
   });
 
-  it('GET /api/items with negative price_lt should return 400', async () => {
+  it('GET /api/items with negative price_lt should return 422', async () => {
     const res = await request(app).get('/api/items?price_lt=-1');
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(422);
   });
 });
 
