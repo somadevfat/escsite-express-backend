@@ -32,3 +32,5 @@ lerna-debug.log*
 
 # macOS
 .DS_Store
+
+/src/generated/prisma
