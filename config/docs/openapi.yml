@@ -8,7 +8,7 @@ servers:
     description: URL of the server
     variables:
       server:
-        default: http://localhost:8080/api
+        default: /api
 paths:
   # 認証
   /auth/signin:

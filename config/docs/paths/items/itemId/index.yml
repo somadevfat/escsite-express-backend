@@ -18,6 +18,8 @@ put:
     - items
   summary: 商品更新
   description: 商品更新
+  parameters:
+    - $ref: ../../../params/ItemId.yml
   requestBody:
     description: 商品更新
     required: true
