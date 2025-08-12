@@ -13,20 +13,20 @@ describe('Auth API Validation E2E', () => {
     expect(res.body).toHaveProperty('token');
   });
 
-  it('POST /api/auth/signin invalid email should return 400', async () => {
+  it('POST /api/auth/signin invalid email should return 422', async () => {
     const res = await request(app)
       .post('/api/auth/signin')
       .send({ email: 'bad', password: 'pass' })
       .set('Content-Type', 'application/json');
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(422);
   });
 
-  it('POST /api/auth/signup missing password should return 400', async () => {
+  it('POST /api/auth/signup missing password should return 422', async () => {
     const res = await request(app)
       .post('/api/auth/signup')
       .send({ email: 'user+bad@example.com' })
       .set('Content-Type', 'application/json');
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(422);
   });
 });
 

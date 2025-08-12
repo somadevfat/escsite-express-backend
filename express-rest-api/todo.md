@@ -2,6 +2,10 @@
 
 このリストは、API機能の実装からデータベース導入、デプロイ準備までのバックエンド開発に必要なタスクを管理するためのものです。
 
+注意:
+- Laravel は移行元です。以降は Express (Prisma + JWT) を本番想定として進めます。
+- Laravel 側の重複実装・保守は原則停止（参照のみ）。不要な二重実装は行いません。
+
 ## Phase 1: API機能実装 (インメモリ)
 まずはインメモリ（サーバーのメモリ上）でデータを管理し、APIのコア機能を一通り実装します。
 
@@ -72,41 +76,31 @@ API機能が固まったら、データを永続化するためにデータベ�
 アプリケーションを本番環境で動かすための準備をします。
 
 ### P6: 画像保存方針（本番ストレージ）
-- [ ] 開発: ローカル `public/storage/items/{itemId}/images/{uuid}.{ext}`
-- [ ] 本番: S3/MinIO + CDN（.env で切替）
-- [ ] API入力は当面 `base64 + extension`、保存後はURL/パスをDB保存
-- [ ] 更新時のロールバック/旧ファイル削除ルール
+- （スコープ外）Laravel（/api）側に未実装のため当面対応しない
 
 ### P7: 認証/認可（本番仕様）
 - [x] 認証方式を決定: JWT を採用（HS256, `JWT_SECRET`, `JWT_EXPIRES_IN`）
 - [ ] `/auth` 実装を本番仕様へ
   - [x] 疑似トークン除去 → JWT 発行/検証に移行
   - [ ] 失敗時のHTTP/エラーフォーマット整備（@api 準拠, 422 等）
-  - [ ] パスワードハッシュ/DB照合（`PrismaAuthRepository` 追加）
-  - [ ] トークン戦略: 短命アクセストークン + リフレッシュ or ローテーション定義
+  - [x] パスワードハッシュ/DB照合（`PrismaAuthRepository` 追加）
+  - （スコープ外）トークン戦略（リフレッシュ/ローテーション）は Laravel 側に未実装のため当面対応しない
 - [ ] ルート毎の認可（管理者専用 等）
   - [x] `/api/items` の POST/PUT/DELETE を管理者専用化（`authenticate` + `requireAdmin`）
   - [x] `/api/my/user` に JWT 認証を適用
   - [ ] その他の保護対象ルートの洗い出しと適用
 
+追補（移行に伴うDB整合）
+- （保留）`users.password_hash` の非NULL化は Laravel 側の実運用要件未確認のため当面見送り
+
 ### P8: セキュリティ/安定性
 - [x] CORS/Helmet/RateLimit 導入（開発: Express ミドルウェアで適用）
-- [ ] 本番: Nginx 前段で CORS/セキュリティヘッダ/RateLimit/TLS/サイズ上限 を適用
-- [ ] バリデーションエラー形式/HTTP 422 を @api に準拠
-- [ ] 入力サイズ上限（画像/JSON）
-- [ ] `/health` と Graceful shutdown
+- （スコープ外）Nginx前段の設定・/health・入力サイズ上限・422への全面統一は Laravel 側で未実施のため当面対応しない
 
 ### P9: OpenAPI/契約
-- [ ] securitySchemes と `security` の明記（Bearer or Cookie）
-- [ ] CI で OpenAPI 検証・コントラクトテスト
+- （スコープ外）securitySchemes/security の明記・エラーレスポンス拡充・servers整合・CIでのOpenAPI検証は Laravel 側に未実装のため当面対応しない
 
-### P10: ログ/監視
-- [ ] アクセス/アプリログ（マスキング）
-- [ ] 監視（APM/メトリクス/アラート）
-
-### P11: CI/CD
-- [ ] Lint/Test/Build/Migrate/Deploy のパイプライン
-- [ ] Secrets 管理（環境別 .env）
+（削除）P10: ログ/監視, P11: CI/CD は Laravel 側に未実装のため当面対応しない
 
 ### P2.5: 環境変数ローディングの整備（横断）
 - [x] `.env` → `.env.{NODE_ENV}` の優先読み込みに変更
