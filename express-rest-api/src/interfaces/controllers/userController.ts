@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { UserUsecase } from '../../application/usecases/userUsecase';
 
 export class UserController {
-  constructor(private readonly userUsecase: UserUsecase) {}
+  constructor(private readonly userUsecase: UserUsecase) { }
 
   async getMe(req: Request, res: Response): Promise<void> {
     try {

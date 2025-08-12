@@ -2,7 +2,7 @@ import { IUserRepository } from '../../domain/repositories/userRepository';
 import { User } from '../../domain/entities/user';
 
 export class UserUsecase {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) { }
 
   async getMyUser(userId?: number): Promise<User> {
     if (userId && Number.isFinite(userId)) {

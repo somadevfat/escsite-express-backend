@@ -12,7 +12,7 @@ import { createUserRoutes } from './userRoutes';
 import { createAuthRoutes } from './authRoutes';
 import { validate } from '../validate';
 import { createItemSchema, updateItemSchema, listItemsQuerySchema } from '../dto/itemDto';
-import { authenticate } from '../middleware/auth';
+import { authenticate, requireAdmin } from '../middleware/auth';
 
 /**
  * Itemエンドポイントのルーティングを設定
@@ -25,17 +25,17 @@ export function createItemRoutes(itemController: ItemController): Router {
   // GET /items - 商品一覧取得（ページネーション付き）
   router.get('/', validate(listItemsQuerySchema), (req, res) => itemController.getAll(req, res));
 
-  // POST /items - 商品作成
-  router.post('/', validate(createItemSchema), (req, res) => itemController.create(req, res));
+  // POST /items - 商品作成（管理者のみ）
+  router.post('/', authenticate, requireAdmin, validate(createItemSchema), (req, res) => itemController.create(req, res));
 
   // GET /items/{ItemId} - 商品詳細取得
   router.get('/:ItemId', (req, res) => itemController.getById(req, res));
 
-  // PUT /items/{ItemId} - 商品更新
-  router.put('/:ItemId', validate(updateItemSchema), (req, res) => itemController.update(req, res));
+  // PUT /items/{ItemId} - 商品更新（管理者のみ）
+  router.put('/:ItemId', authenticate, requireAdmin, validate(updateItemSchema), (req, res) => itemController.update(req, res));
 
-  // DELETE /items/{ItemId} - 商品削除
-  router.delete('/:ItemId', (req, res) => itemController.delete(req, res));
+  // DELETE /items/{ItemId} - 商品削除（管理者のみ）
+  router.delete('/:ItemId', authenticate, requireAdmin, (req, res) => itemController.delete(req, res));
 
   return router;
 }
