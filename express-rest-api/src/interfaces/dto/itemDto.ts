@@ -30,3 +30,10 @@ export const listItemsQuerySchema = z.object({
     price_lt: z.coerce.number().int().min(0).optional(),
   }),
 });
+
+// URL パラメータの ItemId 検証
+export const itemIdParamSchema = z.object({
+  params: z.object({
+    ItemId: z.coerce.number().int().positive(),
+  }),
+});

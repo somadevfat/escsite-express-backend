@@ -13,10 +13,7 @@ init:
 	docker compose exec express sh -lc "npx ts-node src/infrastructure/prisma/seed.ts || true" ; \
 	# health check
 	curl -s -o /dev/null -w "API http://localhost:18081/api/items -> HTTP %{http_code}\n" http://localhost:18081/api/items ; \
-	# launch Prisma Studio (background)
-	docker compose exec -d express sh -lc "npx prisma studio --port 5555 --hostname 0.0.0.0 --browser none" ; \
-	# studio health check
-	curl -s -o /dev/null -w "Studio http://localhost:5555 -> HTTP %{http_code}\n" http://localhost:5555
+	# Prisma Studio の自動起動は任意運用に変更（必要時は `make studio` を使用）
 
 up:
 	docker compose up -d
