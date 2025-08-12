@@ -1,5 +1,5 @@
 in: path
-name: itemId
+name: item_id
 description: 商品ID
 required: true
 schema:

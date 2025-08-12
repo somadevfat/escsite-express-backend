@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { CartUsecase } from '../../application/usecases/cartUsecase';
 
 export class CartController {
-  constructor(private readonly cartUsecase: CartUsecase) {}
+  constructor(private readonly cartUsecase: CartUsecase) { }
 
   async list(_req: Request, res: Response): Promise<void> {
     try {

@@ -17,8 +17,8 @@ paths:
     $ref: ./paths/auth/admin/signin/index.yml
   /auth/signout:
     $ref: ./paths/auth/signout/index.yml
-#  /auth/signup:
-#    $ref: ./paths/auth/signup/index.yml
+  /auth/signup:
+    $ref: ./paths/auth/signup/index.yml
 
   # ログインユーザー関連のエンドポイント
   /my/user:
@@ -27,7 +27,7 @@ paths:
   # ログインユーザー関連のエンドポイント
   /items:
     $ref: ./paths/items/index.yml
-  /items/{itemId}:
+  /items/{item_id}:
     $ref: ./paths/items/itemId/index.yml
   /carts:
     $ref: ./paths/carts/index.yml

@@ -2,7 +2,7 @@ import { ICartRepository } from '../../domain/repositories/cartRepository';
 import { Cart } from '../../domain/entities/cart';
 
 export class CartUsecase {
-  constructor(private readonly cartRepository: ICartRepository) {}
+  constructor(private readonly cartRepository: ICartRepository) { }
 
   async list(userId: number): Promise<Cart[]> {
     return this.cartRepository.findAllByUser(userId);

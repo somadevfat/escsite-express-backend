@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { AuthUsecase } from '../../application/usecases/authUsecase';
 
 export class AuthController {
-  constructor(private readonly authUsecase: AuthUsecase) {}
+  constructor(private readonly authUsecase: AuthUsecase) { }
 
   async signin(req: Request, res: Response): Promise<void> {
     try {

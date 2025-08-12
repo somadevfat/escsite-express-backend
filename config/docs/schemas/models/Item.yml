@@ -44,7 +44,7 @@ required:
   - id
   - name
   - price
-  - contents
+  - content
   - createdAt
   - updatedAt
   - createdBy
