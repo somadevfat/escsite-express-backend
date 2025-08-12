@@ -53,20 +53,20 @@
 API機能が固まったら、データを永続化するためにデータベースを導入します。
 
 ### P4: Prismaのセットアップ（MySQL）
-- [ ] `Prisma` と `Prisma Client` のインストール
-- [ ] `npx prisma init` により `prisma/schema.prisma` と `.env` 作成
-- [ ] `.env` の `DATABASE_URL` を MySQL コンテナに合わせて設定
-- [ ] モデル定義: `User`, `Item`, `Cart`（既存ドメインと整合）
-- [ ] `npx prisma migrate dev --name init` で初期マイグレーション
-- [ ] `npx prisma generate` でクライアント生成
-- [ ] Seed スクリプト作成（初期 Item データ等）
+- [x] `Prisma` と `Prisma Client` のインストール
+- [x] `npx prisma init` により `prisma/schema.prisma` と `.env` 作成
+- [x] `.env` の `DATABASE_URL` を MySQL コンテナに合わせて設定
+- [x] モデル定義: `User`, `Item`, `Cart`（既存ドメインと整合）
+- [x] `npx prisma migrate dev --name init` で初期マイグレーション
+- [x] `npx prisma generate` でクライアント生成
+- [x] Seed スクリプト作成（初期 Item データ等）
 
 ### P5: リポジトリのPrisma対応
-- [ ] `PrismaItemRepository` を作成
-- [ ] `PrismaCartRepository` を作成
-- [ ] `PrismaUserRepository` を作成
-- [ ] DI 切替: `Container` で InMemory と Prisma の切り替え（envで制御）
-- [ ] E2E: テスト DB へ migrate+seed → 既存テスト緑化
+- [x] `PrismaItemRepository` を作成
+- [x] `PrismaCartRepository` を作成
+- [x] `PrismaUserRepository` を作成
+- [x] DI 切替: `Container` で InMemory と Prisma の切り替え（envで制御）
+- [x] E2E: テスト DB へ migrate+seed → 既存テスト緑化
 
 ## Phase 3: 本番環境準備 (デプロイ)
 アプリケーションを本番環境で動かすための準備をします。
