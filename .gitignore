@@ -51,4 +51,7 @@ config/minio/config/
 config/server/nginx/logs/
 config/docs/server/
 
+# Exclude PHP Laravel API project
+/api/
+
 
