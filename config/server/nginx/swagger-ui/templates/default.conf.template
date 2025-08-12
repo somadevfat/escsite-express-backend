@@ -1,3 +1,6 @@
+# Custom default.conf.template for swaggerapi/swagger-ui
+# Generates /etc/nginx/conf.d/default.conf at container start
+
   types {
     text/plain yaml;
     text/plain yml;
@@ -41,7 +44,7 @@
       include templates/embedding.conf;
     }
 
-    # Proxy /api to Express (keeps /api prefix)
+    # Reverse proxy for Express API running on the host (Linux: host-gateway)
     location /api/ {
       proxy_pass http://host.docker.internal:18081/api/;
       proxy_http_version 1.1;

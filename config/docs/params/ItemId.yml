@@ -1,8 +1,8 @@
 in: path
-name: ItemId
-description: ユーザID
+name: itemId
+description: 商品ID
 required: true
 schema:
   type: integer
-  description: ユーザID
+  description: 商品ID
   example: 1
