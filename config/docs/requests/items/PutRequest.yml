@@ -1,0 +1,20 @@
+title: PutRequest
+type: object
+properties:
+  name:
+    type: string
+    description: 名前
+    maxLength: 255
+    example: "商品"
+  price:
+    type: integer
+    description: 金額
+    example: 120
+  content:
+    type: string
+    description: 商品詳細
+    example: "商品詳細！"
+required:
+  - id
+  - name
+  - price

@@ -1,0 +1,131 @@
+services:
+  # CentOS 9 & nginx
+  lh_react_server:
+    container_name: lh_react_server
+    build: ./server
+    ports:
+      - '8080:8080'
+    tty: true
+    depends_on:
+      - lh_react_php
+    restart: always
+    privileged: true
+    command: 
+      - /sbin/init
+    volumes:
+      - ./../api:/var/www/html
+      - ./server/nginx/logs:/var/log/nginx
+      - ./server/nginx/conf:/etc/nginx/conf.d
+  
+  # php(ComposerとNodeのコンテナでもある)
+  lh_react_php:
+    container_name: lh_react_php
+    build: ./php
+    ports:
+      - '9000'
+    restart: always
+    tty: true
+    volumes:
+      - ./../api:/var/www/html
+  
+  # MySQL
+  lh_react_mysql:
+    container_name: lh_react_mysql
+    build: ./mysql
+    ports:
+      - '13307:3306'
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: api_db
+      MYSQL_USER: api_user
+      MYSQL_PASSWORD: p@ssw0rd
+      TZ: 'Asia/Tokyo'
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/logs:/var/log/mysql
+
+  # MySQL M1チップ用
+#  mysql_m1:
+#    container_name: 'mysql_m1'
+#    build: mysql_m1
+#    ports:
+#      - '13307:3306'
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#      MYSQL_DATABASE: api_db
+#      MYSQL_USER: api_user
+#      MYSQL_PASSWORD: p@ssw0rd
+#      TZ: 'Asia/Tokyo'
+#    volumes:
+#      - ./mysql_m1/data:/var/lib/mysql
+#      - ./mysql_m1/logs:/var/log/mysql
+
+  # mail (hostへのmail送信設定がめんどくさいので、docker上だけでmail送信できるようにする)
+  lh_react_mail:
+    container_name: lh_react_mail
+    image: mailhog/mailhog
+    ports:
+        - "8025:8025"
+        - "1025:1025"
+      
+  # minio (object storage)
+  lh_react_minio:
+    container_name: lh_react_minio
+    image: minio/minio:RELEASE.2021-09-15T04-54-25Z
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - ./minio/data:/export
+      - ./minio/config:/root/.minio
+    environment:
+      MINIO_ROOT_USER: minio_secret_key
+      MINIO_ROOT_PASSWORD: minio_access_key
+    entrypoint: bash
+    command: -c "/opt/bin/minio server /export --console-address :9001"
+
+  # minio (起動用コンテナ)
+  lh_react_createbuckets:
+    container_name: lh_react_createbuckets
+    image: minio/mc
+    depends_on:
+      - lh_react_minio
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc config host add myminio http://minio:9000 minio_secret_key minio_access_key) do echo '...waiting...' && sleep 1; done;
+      /usr/bin/mc mb myminio/smart_garage;
+      /usr/bin/mc policy download myminio/smart_garage;
+      exit 0;
+      "
+  # topic: https://www.ritolab.com/entry/232
+  # topic: https://qiita.com/terukizm/items/6850aa316de425e3e3b4
+  lh_react_adminer:
+    container_name: lh_react_adminer
+    hostname: adminer
+    image: adminer:latest
+    restart: always
+    ports:
+      - 18080:8080
+    depends_on:
+      - lh_react_mysql
+
+  lh_react_swagger-ui:
+    container_name: lh_react_swagger
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8888:8080"
+    volumes:
+      - ./docs:/usr/share/nginx/html/docs
+    environment:
+      - URL=./docs/openapi.yml
+
+  lh_react_swagger-merger:
+    container_name: lh_react_swagger-merger
+    build:
+      dockerfile: ./swagger-merger/Dockerfile
+    command: >
+      watch 'swagger-merger -i /docs/src/index.yml -o /docs/openapi.yml' /docs/src/
+    volumes:
+      - ./docs:/docs

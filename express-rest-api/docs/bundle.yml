@@ -1,0 +1,616 @@
+openapi: 3.0.0
+info:
+  title: OpenAPI Template
+  description: Template of split OpenAPI with validator
+  version: 1.0.0
+servers:
+  - url: '{server}'
+    description: URL of the server
+    variables:
+      server:
+        default: 'http://localhost:8080/api'
+paths:
+  /auth/signin:
+    post:
+      tags:
+        - auth
+      summary: ログイン
+      description: ログインを行います。csrfのトークンを取得してから実行してください。
+      requestBody:
+        description: リクエスト
+        required: true
+        content:
+          application/json:
+            schema:
+              title: AuthSignupRequest
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: メールアドレス
+                  example: admin@lh.sandbox
+                password:
+                  type: string
+                  description: パスワード
+                  example: pass
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: 正常応答
+          content:
+            application/json:
+              schema:
+                title: AuthSigninResponse
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: トークン
+                    example: 1x|xxxxxxxxxxxxxxxxxx
+                required:
+                  - token
+  /auth/admin/signin:
+    post:
+      tags:
+        - auth
+      summary: 管理者ログイン
+      description: ログインを行います。csrfのトークンを取得してから実行してください。
+      requestBody:
+        description: リクエスト
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/paths/~1auth~1signin/post/requestBody/content/application~1json/schema'
+      responses:
+        '200':
+          description: 正常応答
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1signin/post/responses/200/content/application~1json/schema'
+  /auth/signout:
+    post:
+      tags:
+        - auth
+      summary: ログアウト
+      description: ログアウトをします。
+      responses:
+        '200':
+          description: 正常応答
+  /auth/signup:
+    post:
+      tags:
+        - auth
+      summary: サインアップ（ユーザ登録）
+      description: サインアップ（ユーザ登録）
+      requestBody:
+        description: リクエスト
+        required: true
+        content:
+          application/json:
+            schema:
+              title: AuthSignupRequest
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: メールアドレス
+                  example: ishikawa@sg.sandbox
+                password:
+                  type: string
+                  description: パスワード
+                  example: pass
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: 正常応答
+          content:
+            application/json:
+              schema:
+                title: AuthSignupResponse
+                allOf:
+                  - type: object
+                    properties:
+                      data:
+                        properties:
+                          token:
+                            type: string
+                            description: トークン
+                            example: 1x|xxxxxxxxxxxxxxxxxx
+                        required:
+                          - token
+                required:
+                  - data
+  /my/user:
+    get:
+      tags:
+        - my/user
+      summary: ユーザー情報取得
+      description: ログインユーザのユーザー情報を取得
+      responses:
+        '200':
+          description: 正常応答
+          content:
+            application/json:
+              schema:
+                title: UserResponse
+                type: object
+                properties: null
+                required:
+                  - id
+                  - email
+                  - isAdmin
+                  - createdAt
+                  - updatedAt
+                  - createdBy
+                  - updatedBy
+  /items:
+    get:
+      tags:
+        - items
+      summary: 商品一覧
+      description: 商品一覧
+      parameters:
+        - name: limit
+          in: query
+          description: ページネーションの１ページ当たりの表示数
+          schema:
+            type: integer
+            example: 20
+        - name: page
+          in: query
+          description: ページネーションのオフセット、何ページ目かを表す
+          schema:
+            type: integer
+            example: 1
+        - in: query
+          name: name_like
+          description: 名前の部分一致
+          required: false
+          schema:
+            type: string
+            description: 親のID
+        - in: query
+          name: price_gte
+          description: 価格の「以上」検索
+          required: false
+          schema:
+            type: integer
+            description: 価格の「以上」検索
+        - in: query
+          name: price_lte
+          description: 価格の「以下」検索
+          required: false
+          schema:
+            type: integer
+            description: 価格の「以下」検索
+        - in: query
+          name: price_gt
+          description: 価格の「より大きい」検索
+          required: false
+          schema:
+            type: integer
+            description: 価格の「より大きい」検索
+        - in: query
+          name: price_lt
+          description: 価格の「より小さい」検索
+          required: false
+          schema:
+            type: integer
+            description: 価格の「より小さい」検索
+      responses:
+        '200':
+          description: 正常応答
+          content:
+            application/json:
+              schema:
+                title: ItemsResponse
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/Pagenation'
+                  - properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Item'
+                required:
+                  - data
+    post:
+      tags:
+        - items
+      summary: 商品作成
+      description: 商品作成
+      requestBody:
+        description: リクエスト
+        required: true
+        content:
+          application/json:
+            schema:
+              title: StoreRequest
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 名前
+                  maxLength: 255
+                  example: 商品
+                price:
+                  type: integer
+                  description: 金額
+                  example: 120
+                content:
+                  type: string
+                  description: 商品詳細
+                  example: 商品詳細！
+                base64:
+                  type: string
+                  description: null
+                  example: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWgAAAFoCAMAAABNO5HnAAA'
+                extension:
+                  type: string
+                  description: 画像拡張子
+                  example: png
+              required:
+                - name
+                - price
+      responses:
+        '200':
+          description: 正常応答
+          content:
+            application/json:
+              schema:
+                title: ItemResponse
+                properties: null
+                type: object
+                required:
+                  - id
+                  - name
+                  - price
+                  - content
+                  - createdAt
+                  - updatedAt
+                  - createdBy
+                  - updatedBy
+  '/items/{ItemId}':
+    get:
+      tags:
+        - items
+      summary: 商品詳細
+      description: 商品詳細
+      parameters:
+        - in: path
+          name: ItemId
+          description: 商品ID
+          required: true
+          schema:
+            type: integer
+            description: 商品ID
+            example: 1
+      responses:
+        '200':
+          description: 正常応答
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1items/post/responses/200/content/application~1json/schema'
+    put:
+      tags:
+        - items
+      summary: 商品更新
+      description: 商品更新
+      parameters:
+        - $ref: '#/paths/~1items~1%7BItemId%7D/get/parameters/0'
+      requestBody:
+        description: 商品更新
+        required: true
+        content:
+          application/json:
+            schema:
+              title: PutRequest
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 名前
+                  maxLength: 255
+                  example: 商品
+                price:
+                  type: integer
+                  description: 金額
+                  example: 120
+                content:
+                  type: string
+                  description: 商品詳細
+                  example: 商品詳細！
+              required:
+                - name
+                - price
+                - content
+      responses:
+        '200':
+          description: 正常応答
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1items/post/responses/200/content/application~1json/schema'
+    delete:
+      tags:
+        - items
+      summary: 商品削除
+      description: 商品削除
+      parameters:
+        - $ref: '#/paths/~1items~1%7BItemId%7D/get/parameters/0'
+      responses:
+        '200':
+          description: 正常応答
+          content: null
+  /carts:
+    get:
+      tags:
+        - carts
+      summary: カート一覧
+      description: カート一覧
+      parameters: null
+      responses:
+        '200':
+          description: 正常応答
+          content:
+            application/json:
+              schema:
+                title: CartsResponse
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/Cart'
+                    - type: object
+                      properties:
+                        item:
+                          $ref: '#/components/schemas/Item'
+    post:
+      tags:
+        - carts
+      summary: カート追加
+      description: カート追加
+      requestBody:
+        description: リクエスト
+        required: true
+        content:
+          application/json:
+            schema:
+              title: StoreRequest
+              type: array
+              items:
+                type: object
+                properties:
+                  item_id:
+                    type: integer
+                    description: 商品ID
+                    example: 2
+                  quantity:
+                    type: integer
+                    description: 個数
+                    example: 3
+                required:
+                  - item_id
+                  - quantity
+      responses:
+        '200':
+          description: 正常応答
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1carts/get/responses/200/content/application~1json/schema'
+components:
+  schemas:
+    User:
+      title: User
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id
+          example: 1
+        email:
+          type: string
+          description: メールアドレス
+          maxLength: 255
+          example: ishikawa@sg.sandbox
+        emailVerifiedAt:
+          type: string
+          nullable: true
+          description: Laravelのメール認証日時
+          example: '2023-03-14 19:39:38'
+        emailReissueToken:
+          type: string
+          nullable: true
+          description: パスワード再発行のトークン
+          example: XXXXXXXXXX
+        isAdmin:
+          type: boolean
+          description: 管理者フラグ
+          example: false
+        createdAt:
+          type: string
+          format: date-time
+          description: 作成日
+          example: '2023-03-14 19:32:41'
+        updatedAt:
+          type: string
+          format: date-time
+          description: 更新日
+          example: '2023-03-15 18:03:09'
+        createdBy:
+          type: integer
+          description: 作成者
+          example: 1
+        updatedBy:
+          type: integer
+          description: 更新者
+          example: 1
+      required:
+        - id
+        - email
+        - isAdmin
+        - createdAt
+        - updatedAt
+        - createdBy
+        - updatedBy
+    Pagenation:
+      title: Pagination
+      type: object
+      properties:
+        currentPage:
+          description: 現在のページ番号
+          type: integer
+          example: 3
+        from:
+          description: 現在のページの最後のデータ番号
+          type: integer
+          example: 5
+        lastPage:
+          description: 最後のページ番号
+          type: integer
+          example: 4
+        lastPageUrl:
+          description: 最後のページのURL
+          type: string
+          example: 'http://localhost/api/{endpoint}?limit=2&page=4'
+        nextPageUrl:
+          description: 次のページのURL
+          type: string
+          example: 'http://localhost/api/{endpoint}?limit=2&page=4'
+        path:
+          description: エンドポイント
+          type: string
+          example: 'http://localhost/api/{endpoint}'
+        perPage:
+          description: １ページ当たりのデータ数
+          type: integer
+          example: 2
+        prevPageUrl:
+          description: 前のページのURL
+          type: string
+          example: 'http://localhost/api/{endpoint}?limit=2&page=2'
+        to:
+          description: 現在のページの最初データ番号
+          type: integer
+          example: 6
+        total:
+          description: 検索ヒット数
+          type: integer
+          example: 8
+      required:
+        - currentPage
+        - from
+        - lastPage
+        - lastPageUrl
+        - nextPageUrl
+        - path
+        - perPage
+        - prevPageUrl
+        - to
+        - total
+    Item:
+      title: Item
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id
+          example: 1
+        name:
+          type: string
+          description: 名前
+          maxLength: 255
+          example: 商品
+        price:
+          type: integer
+          description: 金額
+          example: 120
+        image:
+          type: string
+          description: 画像のURL
+          example: 'http://localhost:8080/storage/items/13/images/6683b784f3c45.png'
+        content:
+          type: string
+          description: 商品詳細
+          example: 商品詳細！
+        createdAt:
+          type: string
+          format: date-time
+          description: 作成日
+          example: '2023-03-14 19:32:41'
+        updatedAt:
+          type: string
+          format: date-time
+          description: 更新日
+          example: '2023-03-15 18:03:09'
+        createdBy:
+          type: integer
+          description: 作成者
+          example: 1
+        updatedBy:
+          type: integer
+          description: 更新者
+          example: 1
+      required:
+        - id
+        - name
+        - price
+        - content
+        - createdAt
+        - updatedAt
+        - createdBy
+        - updatedBy
+    Cart:
+      title: Cart
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id
+          example: 1
+        userId:
+          type: integer
+          description: ユーザID
+          example: 1
+        itemId:
+          type: integer
+          description: 商品ID
+          example: 2
+        quantity:
+          type: integer
+          description: 個数
+          example: 3
+        createdAt:
+          type: string
+          format: date-time
+          description: 作成日
+          example: '2023-03-14 19:32:41'
+        updatedAt:
+          type: string
+          format: date-time
+          description: 更新日
+          example: '2023-03-15 18:03:09'
+        createdBy:
+          type: integer
+          description: 作成者
+          example: 1
+        updatedBy:
+          type: integer
+          description: 更新者
+          example: 1
+      required:
+        - id
+        - userId
+        - itemId
+        - quantity
+        - createdAt
+        - updatedAt
+        - createdBy
+        - updatedBy

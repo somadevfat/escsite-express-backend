@@ -1,0 +1,54 @@
+# ------------------------------
+# Global ignores
+# ------------------------------
+
+# OS / Editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node / TypeScript
+node_modules/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Env files
+.env
+.env*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs/
+**/logs/
+*.log
+**/*.log
+
+# Docker (local overrides)
+docker-compose.override.yml
+
+# ------------------------------
+# Project specific ignores
+# ------------------------------
+
+# config service volumes
+config/mysql/data/
+config/mysql/logs/
+config/mysql_m1/data/
+config/mysql_testing/data/
+config/minio/data/
+config/minio/config/
+config/server/nginx/logs/
+config/docs/server/
+
+
