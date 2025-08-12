@@ -8,7 +8,8 @@ export class CartController {
     try {
       const userId = 1; // 認証導入前の固定
       const carts = await this.cartUsecase.list(userId);
-      res.status(200).json(carts);
+      // Swagger 経由でも安定させるため、防御的に必ず配列で返す
+      res.status(200).json(Array.isArray(carts) ? carts : []);
     } catch (e) {
       res.status(500).json({ error: 'Failed to get carts', statusCode: 500 });
     }

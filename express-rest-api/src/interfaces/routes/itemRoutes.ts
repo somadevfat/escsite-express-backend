@@ -11,7 +11,7 @@ import { createCartRoutes } from './cartRoutes';
 import { createUserRoutes } from './userRoutes';
 import { createAuthRoutes } from './authRoutes';
 import { validate } from '../validate';
-import { createItemSchema, updateItemSchema, listItemsQuerySchema } from '../dto/itemDto';
+import { createItemSchema, updateItemSchema, listItemsQuerySchema, itemIdParamSchema } from '../dto/itemDto';
 import { authenticate, requireAdmin } from '../middleware/auth';
 
 /**
@@ -29,13 +29,13 @@ export function createItemRoutes(itemController: ItemController): Router {
   router.post('/', authenticate, requireAdmin, validate(createItemSchema), (req, res) => itemController.create(req, res));
 
   // GET /items/{ItemId} - 商品詳細取得
-  router.get('/:ItemId', (req, res) => itemController.getById(req, res));
+  router.get('/:ItemId', validate(itemIdParamSchema), (req, res) => itemController.getById(req, res));
 
   // PUT /items/{ItemId} - 商品更新（管理者のみ）
-  router.put('/:ItemId', authenticate, requireAdmin, validate(updateItemSchema), (req, res) => itemController.update(req, res));
+  router.put('/:ItemId', authenticate, requireAdmin, validate(itemIdParamSchema), validate(updateItemSchema), (req, res) => itemController.update(req, res));
 
   // DELETE /items/{ItemId} - 商品削除（管理者のみ）
-  router.delete('/:ItemId', authenticate, requireAdmin, (req, res) => itemController.delete(req, res));
+  router.delete('/:ItemId', authenticate, requireAdmin, validate(itemIdParamSchema), (req, res) => itemController.delete(req, res));
 
   return router;
 }
